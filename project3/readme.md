@@ -13,4 +13,6 @@ Mục tiêu xử lý dữ liệu bằng Python / Pandas
 6. Đạo diễn có nhiều phim nhất & diễn viên đóng nhiều phim nhất
 7. Thống kê số lượng phim theo thể loại (Action, Family, …)
 
+Script Python: Run main.ipynbipynb
+
 
