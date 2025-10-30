@@ -1,0 +1,7 @@
+#,test_case,result
+1,UE1 / SaleOrder,(CustomerID LIKE '%123')
+2,U03 / PurchaseOrder,"(DeliveryMethodName LIKE '%sea%' OR DeliveryMethodName LIKE 'air%') AND PlantID IN ('W1','W4') AND VendorId IN ('VS04','UK8A')"
+3,U09 / Customer,1=1
+4,ADV / DeliveryMethod,(DeliveryMethodName LIKE 'Road%' OR DeliveryMethodName LIKE '%Rail')
+5,ADV / *,1=1
+6,ADV / Vendor,"VendorId IN ('VP19','UB55')"
