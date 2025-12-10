@@ -19,7 +19,7 @@ Supported datasets:
 |---------|----------------|----------------|----------------|
 | IP Locations | `export_iplocations.py` | `cf_load_iplocations` | `ip_locations` |
 | Product Info | `export_product_infor.py` | `cf_load_productinfor` | `product_infor` |
-| Summary | `export_summary_to_gcs.py` | `cf_load_summary` | `raw.summary` |
+| Summary | `export_summary_to_gcs.py` | `cf_load_summary` | `summary` |
 
 ## 3. Architecture
 ```
@@ -77,66 +77,53 @@ BigQuery Raw Tables
         └── export_summary_to_gcs.py
 ```
 
-## 5. Export Process
-Each exporter script:
-- Loads raw data  
-- Cleans / normalizes fields  
-- Converts to JSONL  
-- Saves to `/data/<dataset>/`  
-- Uploads to GCS  
-- Logs activity under `/logs/`  
-
-## 6. Cloud Functions
-Each Cloud Function loads data from GCS → BigQuery:
-- Setup config, code in src/cloud_functions_bq
-- Deployment, code in src/cf_deploy.sh
-
-Deployment example:
+## 5. Running the Pipeline
+#### 1. Install dependencies:
 ```
-gcloud functions deploy cf_load_summary   
---gen2   
---runtime=python311
---region=asia-southeast1   
---source=src/cloud_functions_bq/cf_load_summary   
---entry-point=gcs_to_bq   
---trigger-event="google.cloud.storage.object.v1.finalized"   
---trigger-resource="raw_summary"   
---set-env-vars=PROJECT_ID=your_project,DATASET_ID=raw,TABLE_ID=summary
+poetry install
 ```
-
-## 7. BigQuery Integration
-Schemas created via:
-- `create_schema.py`  
+#### 2. Create table & schema in Bigquery:
 
 Raw tables:
 - `ip_locations`
 - `product_infor`
 - `summary`.
 
-## 8. Monitoring
-- Cloud Logging  
-- BigQuery job logs  
-- Local log files  in logs/
 
-## 10. Running the Pipeline
-Install dependencies:
 ```
-poetry install
+python src/create_schema.py
+
 ```
 
-Run exporters:
-```
-python src/exporters_to_gcs/export_iplocations.py
-python src/exporters_to_gcs/export_product_infor.py
-python src/exporters_to_gcs/export_summary_to_gcs.py
-```
+#### 3. Deploy all Cloud Functions:
+- Setup config, code in src/cloud_functions_bq
+- Deployment, code in src/cf_deploy.sh
 
-Deploy all Cloud Functions:
 ```
 bash src/cf_deploy.sh
 ```
 
-Validate tables in BigQuery.
+#### 4. Run exporters to GSC -> automate load to Bigquery through Cloud Functions:
 
-## 11. Conclusion
+Each exporter script:
+- Loads raw data  
+- Cleans / normalizes fields  
+- Converts to JSONL  
+- Saves to `/data/<dataset>/`  
+- Uploads to GCS  
+- Logs activity under `/logs/` 
+
+
+```
+python src/exporters_to_gcs/export_iplocations.py
+python src/exporters_to_gcs/export_product_infor.py
+python src/exporters_to_gcs/export_summary_to_gcs.py
+
+```
+#### 5. Monitoring
+- Cloud Logging
+- BigQuery job logs
+- Local log files in logs/
+
+## 6. Conclusion
 This fully automated multi-table ETL pipeline demonstrates scalable workflow orchestration on GCP—exporting data, uploading to GCS, auto-triggering Cloud Functions, and loading into BigQuery with monitoring and profiling capabilities.
