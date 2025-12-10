@@ -1,0 +1,9 @@
+2025-12-10 16:58:20,693 [INFO] Connected Mongodb: OK
+2025-12-10 16:58:22,295 [INFO] Connected GCS bucket: OK
+2025-12-10 16:58:22,295 [INFO] Start process
+2025-12-10 16:58:22,295 [INFO] Start reading MongoDB...
+2025-12-10 16:58:22,499 [INFO] [Local] Start batch 1 (size10000, first_doc=5ed8cb2bc671fc36b74653ad)
+2025-12-10 16:58:22,963 [INFO] [Local] Done batch 1 -> /home/thien-nam/data_engineer/GCP/Project6/data/summary/batch_1.jsonl
+2025-12-10 16:58:22,963 [INFO] [GCS] Start upload batch 1
+2025-12-10 16:58:26,879 [INFO] [GCS] Done upload batch 1 -> gs://raw_summary/batch_1.jsonl (size=10000, time=3.92 s)
+2025-12-10 16:58:26,880 [INFO] Export done -> total batch=1, total_docs=10000, time=0.10 minutes
