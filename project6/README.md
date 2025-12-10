@@ -44,8 +44,8 @@ BigQuery Raw Tables
 │   ├── product_infor
 │   │   └── product_infor.jsonl
 │   ├── summary
-│   │   └── batch_1.jsonl
-│   └── summary_sample
+│       └── batch_1.jsonl
+│  
 ├── logs
 │   ├── product_infor
 │   │   ├── log_infor.jsonl
