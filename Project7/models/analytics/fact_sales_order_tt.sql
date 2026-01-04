@@ -9,7 +9,7 @@ SELECT
     coalesce(p1.product_id,-1) as product_id,
     p3.date_id, 
     coalesce(p2.location_id,-1) as location_id,
-    p1.ip_address,
+    coalesce(p1.ip_address,"XNA") as ip_address,
     coalesce(p1.user_id,-1) as user_id,
     p1.store_id,
     p1.local_time,
