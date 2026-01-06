@@ -13,7 +13,7 @@ WITH dim_location__source AS (
     FROM dim_location__source 
 )
 , dim_location__undefined_value AS (
-    SELECT 
+    SELECT DISTINCT
         location_id,
         country_short_name,
         country_long_name,
