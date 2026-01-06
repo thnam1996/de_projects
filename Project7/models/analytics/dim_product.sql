@@ -16,7 +16,7 @@ WITH dim_product__source AS (
     FROM dim_product__source 
 )
 , dim_product__undefined_value AS (
-    SELECT 
+    SELECT DISTINCT
         product_id,
         product_name,
         product_url,
