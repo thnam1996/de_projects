@@ -1,15 +1,20 @@
 WITH stg_fact_sales_order_tt__source AS (
-    SELECT 
-        DISTINCT *
+    SELECT  *
     FROM {{source('glamira_src','raw_summary')}}
     WHERE collection = 'checkout_success'
 )
 
-/* 1. unnest cart_products */
+/* 1. remove fail url */
+, stg_fact_sales_order_tt__remove_url_fail AS (
+    SELECT *
+    FROM stg_fact_sales_order_tt__source 
+    WHERE current_url NOT LIKE 'file://%'
+)
 
+/* 2. unnest cart_products */
 , stg_fact_sales_order_tt__unnest AS (
     SELECT s.*, cp
-    FROM stg_fact_sales_order_tt__source s
+    FROM stg_fact_sales_order_tt__remove_url_fail s
     CROSS JOIN UNNEST(s.cart_products) AS cp
 )
 
@@ -81,15 +86,14 @@ WITH stg_fact_sales_order_tt__source AS (
         END
         AS NUMERIC
         ) AS price,
-        CAST(coalesce(cp.currency, "XNA") AS STRING) AS currency
+        NULLIF(TRIM(cp.currency),'') AS currency
     FROM stg_fact_sales_order_tt__unnest s
     WHERE s.order_id IS NOT NULL
-        AND cp.product_id IS NOT NULL
 )
 
 , stg_fact_sales_order_tt__gen_key AS (
     SELECT
-        FARM_FINGERPRINT(CAST(Order_id AS STRING) || CAST(Product_id AS STRING)) AS sk_fact_sales,
+        DISTINCT FARM_FINGERPRINT(CAST(Order_id AS STRING) || CAST(Product_id AS STRING)) AS sk_fact_sales,
         order_id,
         product_id,
         ip_address,
@@ -101,9 +105,46 @@ WITH stg_fact_sales_order_tt__source AS (
         UNIX_SECONDS(TIMESTAMP(DATE(time_stamp))) AS date_id,
         quantity,
         price,
-        currency,
-        check
+        CASE
+                WHEN currency = '€'        THEN 'EUR'
+                WHEN currency = '£'        THEN 'GBP'
+                WHEN currency = 'CHF'      THEN 'CHF'
+                WHEN currency = 'kr'       THEN 'SEK'
+                WHEN currency = '₺'        THEN 'TRY'
+                WHEN currency = '￥'       THEN 'JPY'
+                WHEN currency = 'R$'       THEN 'BRL'
+                WHEN currency = 'AU $'     THEN 'AUD'
+                WHEN currency = 'SGD $'    THEN 'SGD'
+                WHEN currency = 'CAD $'    THEN 'CAD'
+                WHEN currency IN ('$', 'USD $') THEN 'USD'
+                WHEN currency = 'HKD $'    THEN 'HKD'
+                WHEN currency = 'NZD $'    THEN 'NZD'
+                WHEN currency = 'MXN $'    THEN 'MXN'
+                WHEN currency = 'Kč'       THEN 'CZK'
+                WHEN currency = 'Ft'       THEN 'HUF'
+                WHEN currency = 'zł'       THEN 'PLN'
+                WHEN currency = '₹'        THEN 'INR'
+                WHEN currency = 'лв.'      THEN 'BGN'
+                WHEN currency = '₫'        THEN 'VND'
+                WHEN currency = '₱'        THEN 'PHP'
+                WHEN currency = '₲'        THEN 'PYG'
+                WHEN currency = 'CRC ₡'    THEN 'CRC'
+                WHEN currency = 'COP $'    THEN 'COP'
+                WHEN currency = 'BOB Bs'   THEN 'BOB'
+                WHEN currency = 'GTQ Q'    THEN 'GTQ'
+                WHEN currency = 'PEN S/.'  THEN 'PEN'
+                WHEN currency = 'DOP $'    THEN 'DOP'
+                WHEN currency = 'CLP'      THEN 'CLP'
+                WHEN currency = 'Lei'      THEN 'RON'
+                WHEN currency = 'UYU'      THEN 'UYU'
+                WHEN currency = 'din.'     THEN 'RSD'
+                WHEN currency = 'kn'       THEN 'HRK'
+                WHEN currency = 'د.ك.'     THEN 'KWD'
+                WHEN currency = 'XNA'      THEN 'XNA'
+                ELSE 'USD'
+        END AS currency
     FROM stg_fact_sales_order_tt__rename
+    
 )
 
 SELECT 

@@ -19,7 +19,7 @@ WITH stg_dim_location__source AS (
 
 , stg_dim_location__gen_key AS (
     SELECT
-        FARM_FINGERPRINT(Country_short_name ||Region_name ||City_name) AS location_id,
+        FARM_FINGERPRINT(country_short_name ||region_name ||city_name) AS location_id,
         ip_address,
         country_short_name,
         country_long_name,

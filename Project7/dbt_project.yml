@@ -31,13 +31,22 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   Project7:
-    # Config indicated by + and applies to all files under models/example/
+    # Config indicated by + and appliestable to all files under models/example/
     staging:
       +materialized: view
       +schema: staging
 
     analytics:
-      +materialized: incremental
+      +materialized: table
       +schema: analytics
+
+seeds:
+  Project7:
+    +schema: analytics
+    exchange_rate_usd:
+      +column_types:
+        currency: string
+        rate_to_usd: numeric
+        as_of_gmt: timestamp
 
 

@@ -9,8 +9,8 @@ WITH dim_product__source AS (
         coalesce(product_url,'XNA') AS product_url,
         coalesce(sku,'XNA') AS sku,
         coalesce(product_type,'XNA') AS product_type,
-        coalesce(category_name,'XNA') AS category_name,
-        coalesce(collection_name,'XNA') AS collection_name,
+        coalesce(NULLIF(TRIM(category_name),''),'XNA') AS category_name, 
+        coalesce(NULLIF(TRIM(collection_name),''),'XNA') AS collection_name,
         min_price,
         max_price
     FROM dim_product__source 
