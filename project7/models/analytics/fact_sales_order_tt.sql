@@ -10,6 +10,7 @@ WITH fact_sales_order__source AS (
     SELECT *
     FROM {{ref('stg_fact_sales_order_tt')}}
 )
+
 ,fact_sales_order_rank_timestamp_price AS (
     SELECT 
         *,
@@ -17,6 +18,7 @@ WITH fact_sales_order__source AS (
 
     FROM fact_sales_order__source
     )
+
 ,fact_sales_order_remove_dup AS (
     SELECT 
         *

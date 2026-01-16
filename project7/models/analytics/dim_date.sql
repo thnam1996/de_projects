@@ -1,12 +1,15 @@
 WITH dim_date__source AS (
-    SELECT 
-        DISTINCT DATE(time_stamp) AS full_date
-    FROM {{ref('stg_fact_sales_order_tt')}}
-    WHERE time_stamp IS NOT NULL
+    SELECT full_date
+    FROM unnest(
+        GENERATE_DATE_ARRAY(
+            DATE '2020-01-01',
+            DATE '2025-12-31',
+            INTERVAL 1 DAY
+        )) AS full_date
 )
 , dim_date__format AS (
     SELECT
-        UNIX_SECONDS(TIMESTAMP(full_date)) AS date_id,
+        CAST(FORMAT_DATE('%Y%m%d',full_date) AS INT64) AS date_id,
         full_date,
         FORMAT_DATE('%A', full_date) AS day_of_week,
         CASE

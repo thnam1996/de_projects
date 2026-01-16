@@ -102,7 +102,7 @@ WITH stg_fact_sales_order_tt__source AS (
         store_id,
         local_time,
         time_stamp,
-        UNIX_SECONDS(TIMESTAMP(DATE(time_stamp))) AS date_id,
+        CAST(FORMAT_DATE('%Y%m%d', time_stamp) AS INT64) AS date_id,
         quantity,
         price,
         CASE
