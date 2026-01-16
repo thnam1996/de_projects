@@ -2,8 +2,8 @@ WITH dim_date__source AS (
     SELECT full_date
     FROM unnest(
         GENERATE_DATE_ARRAY(
-            DATE '2020-01-01',
-            DATE '2025-12-31',
+            DATE '2000-01-01',
+            DATE '2029-12-31',
             INTERVAL 1 DAY
         )) AS full_date
 )
