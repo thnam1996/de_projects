@@ -1,4 +1,4 @@
-# Project 05 – Data Collection & Storage Foundation
+# Ecommerce Behaviour Data Pipeline – Data Collection & Storage Foundation
 
 ## Overview
 
