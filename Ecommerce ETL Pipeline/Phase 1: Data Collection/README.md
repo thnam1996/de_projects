@@ -1,22 +1,23 @@
-# Phase 1: Data Collection & Storage Foundation
+# Project 05 – Data Collection & Storage Foundation
 
 ## Overview
 
 This project builds a small end-to-end data infrastructure on **Google Cloud Platform (GCP)** to collect, store, and enrich data. The workflow includes:
 
-- Set up GCP included GCS, VM (for computing), MongoDB on VM
-- Push Raw e-commerce event data (DB name 'summary') stored in MongoDB on a GCP VM  
-- Enrichment pipelines for:
-  - IP address → geographic location  
-  - Product ID → crawl web to get full product information  
+- Uploading raw dataset files to **Google Cloud Storage (GCS)**
+- Creating a **Compute Engine VM** and installing MongoDB
+- Importing a large web-tracking dataset (~41M events)
+- Exploring MongoDB collections and creating a **Data Dictionary**
+- Writing Python pipelines to:
+  - Perform **IP geolocation** using ip2location
+  - Extract and crawl **product names** for each `product_id`
+- Storing processed results into CSV files and MongoDB collections
 
-**Goal:** datasets prepared for downstream ETL and analytics included:
-1. Ecommerce Events (41M)
-2. Product Informations (19K)
-3. IP Locations (3.2M)
+**Goal:** Build a practical foundation for data ingestion and enrichment following Data Engineering best practices.
 
+---
 
-## Architecture
+## Architecture / Data Flow
 
 ```
 Raw dataset (local)
@@ -25,19 +26,19 @@ Google Cloud Storage (raw bucket)
         ↓
 GCP VM + MongoDB
         ↓
-Data exploration → Data Dictionary 
+Data exploration → Data Dictionary
         ↓
-Enrichment IP Location Pipeline (Python) → CSV (ip_locations)
+IP Location Pipeline (Python) → CSV (ip_locations)
         ↓
-Enrichment Product Infor Pipeline (Python + Async crawler) → CSV (crawl_product_infor)
+Product Infor Pipeline (Python + Async crawler) → CSV (crawl_product_infor)
 ```
 
 ---
 
-## Repository Structure
+## Project Structure
 
 ```
-project/
+project5/
 ├── data
 │   ├── crawl_product_infor
 │   │   ├── log_infor.csv
@@ -69,13 +70,10 @@ project/
 
 ## How to Run This Project
 
-### 1. Set up GCP & Google Storage & VM & MongoDB:
+### 1. Set up Google Storage & VM & MongoDB & Database:
 
 - Check folder infra (detail set up in `Infrastructure Scripts`)
-- create a GCS bucket & upload files
-- create a Compute Engine VM
-- install MongoDB on VM
-- download data from GCS to VM & restore in Mongodb
+- Note: raw data need to contact owner to receive
 
 
 ### 2. Prepare Python environment in VM
@@ -93,9 +91,9 @@ python scripts/ip_location.py
 
 This pipeline:
 
-- Extracts unique IPs from the `summary` collection of DB `summary` in MongoDB
+- Extracts unique IPs from the `summary` collection of `countly` DB
 - Performs geolocation using `ip2location.bin`
-- Writes output to GCP & backup in VM local 
+- Writes output to GCP:
 - Can check output in:
   - `data/ip_with_location.csv` >> IPs have infors
   - `data/ip_no_info.csv` >> IPs not have infors
@@ -105,24 +103,43 @@ This pipeline:
 ### 4. Run the Product Infor Pipeline
 
 ```bash
-python: scripts/crawl_product_infor.py
+python scripts/crawl_product_infor.py
 ```
 
 This pipeline:
 
-- Extracts and deduplicates `product_id` values from multiple product-related collectionssummary
-- Crawls product pages **asynchronously** using `asyncio` and `aiohttp` to improve performance
-- Parses HTML responses with **BeautifulSoup** to extract product information
-- Separates successful results and failed requests into logs to support retry and reprocessing
+- Extracts `product_id` from several product-related collections
+- Deduplicates the product list
+- Uses `asyncio`, `aiohttp`, and `BeautifulSoup` to crawl product infors
 - Outputs:
   - `data/product_infor.csv` >> list product_ids with infor
   - `data/log_infor.csv` & `data/log_infor_retry.csv` >> log pipeline
 
 
+---
+
+## Infrastructure Scripts
+
+The `infra/` directory includes helper scripts:
+
+- create a GCS bucket & upload files
+- create a Compute Engine VM
+- install MongoDB on VM
+- download data from GCS to VM & restore in Mongodb
+
+More details in:
+
+```
+infra/README.md
+```
+
+
+---
+
 
 ## Documentation
 
-Details about the `summary` database can be found here:
+Details about the `summary` collection can be found here:
 
 ```
 doc/data_summary.md
@@ -147,4 +164,4 @@ doc/data_summary.md
 - Building a Data Dictionary for semi-structured JSON data  
 - Implementing async crawling with aiohttp + BeautifulSoup  
 - Designing ingestion + enrichment pipelines  
-- Organizing a clean and professional GitHub repositorydatabase
+- Organizing a clean and professional GitHub repository
