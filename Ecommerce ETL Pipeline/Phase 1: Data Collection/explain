@@ -1,0 +1,135 @@
+✅ Key Actions You Implemented (crawl_product_infor.py)
+
+
+Extracted product_id from multiple product-related MongoDB collections
+
+Deduplicated product IDs to avoid redundant crawling
+
+Implemented asynchronous web crawling using asyncio and aiohttp to improve performance
+
+Controlled concurrency to prevent request overload and timeouts
+
+Crawled product pages across multiple country domains with fallback logic
+
+Parsed HTML responses using BeautifulSoup to extract embedded product data
+
+Extracted structured product attributes from JSON embedded in HTML
+
+Implemented logging for both successful and failed crawls
+
+Designed the pipeline to support retrying failed product IDs only, without reprocessing successful ones
+
+
+
+🎯 Common Interview Questions & Short Answers
+1️⃣ Why did you use asynchronous crawling instead of sequential requests?
+
+To significantly reduce total crawling time. Asynchronous requests allow multiple product pages to be fetched in parallel instead of waiting for each request to finish one by one.
+
+2️⃣ How did you control the number of concurrent requests?
+
+I limited concurrency using an async semaphore so the crawler doesn’t overload the target website or cause excessive timeouts.
+
+3️⃣ Why did you deduplicate product IDs before crawling?
+
+To avoid crawling the same product multiple times, reduce unnecessary network calls, and improve overall pipeline efficiency.
+
+4️⃣ How do you handle failures or partial errors during crawling?
+
+Successful and failed requests are logged separately. Failed product IDs can be retried in a follow-up run without reprocessing successful ones.
+
+5️⃣ Why did you parse HTML instead of using an API?
+
+The product information was embedded in the page HTML as JSON, and there was no public API available, so parsing the HTML was the most reliable approach.
+
+6️⃣ What happens if the HTML structure changes?
+
+The crawler logs parsing failures, making it easy to detect issues. Failed items can be reviewed and retried after updating the parsing logic.
+
+7️⃣ How does this pipeline scale with more products?
+
+The asynchronous design allows the pipeline to scale efficiently by increasing concurrency within safe limits, without changing the overall architecture.
+
+8️⃣ How is this pipeline used downstream?
+
+The output is stored as structured CSV files and later ingested into the data warehouse, where it is joined with transactional data for analytics and reporting.
+
+
+
+
+
+
+
+
+
+✅ Key Actions You Implemented (ip_locations.py)
+
+Bạn có thể nói / ghi trong README / CV theo các ý sau:
+
+Extracted unique, valid IP addresses from MongoDB using an aggregation pipeline
+
+Filtered out null, empty, and invalid IP values at the database level
+
+Used IP2Location offline database (BIN file) to map IPs to geographic attributes (country, region, city)
+
+Processed IPs in batches with logging to handle large-scale datasets
+
+Separated successful mappings and failed lookups into different CSV outputs
+
+Implemented error handling to capture invalid IPs and lookup failures without stopping the pipeline
+
+Uploaded processed results directly to Google Cloud Storage for downstream ETL and analytics
+
+👉 Những action này cho thấy bạn:
+
+Biết push logic xuống database
+
+Biết batch processing
+
+Biết data quality + error handling
+
+Biết integrate with cloud storage
+
+🎯 Common Interview Questions & Short Answers
+1️⃣ Why did you use an aggregation pipeline in MongoDB instead of querying all documents?
+
+To extract only unique IP values and reduce the amount of data processed in Python, improving performance and memory usage.
+
+2️⃣ Why use IP2Location offline instead of an external API?
+
+Offline lookup avoids API rate limits, reduces latency, and is more cost-effective for large-scale IP processing.
+
+3️⃣ How do you handle invalid or missing IP addresses?
+
+Invalid or empty IPs are filtered early, and IPs without location data are logged separately so they don’t affect the main pipeline.
+
+4️⃣ How does this pipeline scale with large datasets?
+
+It processes IPs in batches, logs progress periodically, and avoids repeated lookups by deduplicating IPs upfront.
+
+5️⃣ Why do you write two separate output files?
+
+Separating successful and failed records makes data quality issues explicit and allows retries or analysis without reprocessing valid data.
+
+6️⃣ Why upload results to Google Cloud Storage?
+
+GCS acts as a durable staging layer so the data can be ingested into BigQuery or reused by downstream pipelines.
+
+7️⃣ What would you improve if this ran in production?
+
+I would parallelize lookups, add retry/backoff logic, and convert the output to partitioned formats like Parquet for better downstream performance.
+
+🧠 One-liner (rất hay dùng khi hết giờ)
+
+I built an IP enrichment pipeline that deduplicates IPs in MongoDB, maps them to geographic locations using an offline database, handles data quality issues, and publishes the results to Google Cloud Storage for analytics.
+
+📌 Nếu interviewer hỏi sâu hơn (bonus)
+
+Data quality: “How do you know which IPs failed?”
+→ They’re explicitly logged with a reason code.
+
+Cost: “Why not call an API?”
+→ Offline lookup avoids per-request costs and rate limits.
+
+Pipeline usage: “Where is this data used?”
+→ Joined with event data in the warehouse for geo-based analytics.

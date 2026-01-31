@@ -1,27 +1,21 @@
 # 📦 ETL Pipeline: VM/MongoDB → Google Cloud Storage → BigQuery  
-### Automated Multi-Table ETL Pipeline using Cloud Functions
 
-## 1. Learning Objectives
-This project demonstrates core data engineering concepts:
-- Implementing ETL processes  
-- Transferring data from VM/MongoDB to Google Cloud Storage   
-- Building table schemas on BigQuery programmatically  
-- Loading structured data into BigQuery  
-- Creating automated ingestion using Cloud Functions
-- Monitoring logs and applying data profiling 
 
-## 2. Project Overview
-This pipeline extracts data from VM/MongoDB, writes formatted `.jsonl` files to Google Cloud Storage, and uses Cloud Functions to automatically load the data into BigQuery.
+## 1. Project Overview
+- Batch export from MongoDB (Phase 1), writes formatted `.jsonl` files to Google Cloud Storage  
+- Event-driven ingestion using Cloud Functions  
+- Raw tables created and loaded into BigQuery  (build schema firstfirst)
+- Logging implemented for monitoring and debugging  
+
 
 Supported datasets:
-
 | Dataset | Export Script | Cloud Function | BigQuery Table |
 |---------|----------------|----------------|----------------|
 | IP Locations | `export_iplocations.py` | `cf_load_iplocations` | `ip_locations` |
 | Product Info | `export_product_infor.py` | `cf_load_productinfor` | `product_infor` |
 | Summary | `export_summary_to_gcs.py` | `cf_load_summary` | `summary` |
 
-## 3. Architecture
+## 2. Architecture
 ```
 VM / MongoDB  
        ↓
@@ -36,7 +30,7 @@ Cloud Functions
 BigQuery Raw Tables
 ```
 
-## 4. Repository Structure
+## 4. Repository Structure 
 ```
 .project
 ├── data
@@ -106,9 +100,7 @@ bash src/cf_deploy.sh
 #### 4. Run exporters to GSC -> automate load to Bigquery through Cloud Functions:
 
 Each exporter script:
-- Loads raw data  
-- Cleans / normalizes fields  
-- Converts to JSONL  
+- Converts data from Phase 1 to JSONL  
 - Saves to `/data/<dataset>/`  
 - Uploads to GCS  
 - Logs activity under `/logs/` 
@@ -125,5 +117,4 @@ python src/exporters_to_gcs/export_summary_to_gcs.py
 - BigQuery job logs
 - Local log files in logs/
 
-## 6. Conclusion
-This fully automated multi-table ETL pipeline demonstrates scalable workflow orchestration on GCP—exporting data, uploading to GCS, auto-triggering Cloud Functions, and loading into BigQuery with monitoring and profiling capabilities.
+
