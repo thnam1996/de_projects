@@ -1,22 +1,15 @@
-# 📦 Analytics Engineering with dbt: BigQuery Data Warehouse  
-### End-to-End dbt Project with Seeds, Incremental Models, and Data Quality Tests
-
-## 1. Learning Objectives
-This project demonstrates core **Analytics Engineering** concepts:
-- Designing a star schema (fact & dimension tables)
-- Transforming raw data using dbt (SQL-based ELT)
-- Managing static reference data using dbt seeds
-- Implementing incremental models with merge strategy
-- Ensuring data quality using dbt tests (not_null, unique, relationships)
-- Converting multi-currency sales data into USD using exchange rates
+# 📦 Phase 3 — Analytics Engineering & Visualization  
 
 
-## 2. Project Overview
-This project builds an **analytics-ready E-Commerce data warehouse** on **BigQuery** using **dbt**.
+## 1. Project Overview
+- Data transformation using **dbt** on BigQuery  
+- Staging models for data cleaning and standardization  
+- Analytics models designed with a **star schema**  
+- Incremental fact tables and data quality tests  
+- Data prepared for direct BI consumption  
+- Make a **Looker Studio Dashboard** to visualize Ecommerce Performance
 
-The pipeline transforms staging data into clean dimension and fact tables, applies data quality checks, and enriches sales data with **USD exchange rates** via dbt seeds.
-
-Supported datasets:
+**Supported datasets**:
 
 | Layer | Model | Materialization | Description |
 |------|-------|------------------|-------------|
@@ -34,7 +27,7 @@ Supported datasets:
 
 
 
-## 3. Architecture
+## 2. Architecture
 ```
     BigQuery Raw (from project6)
           ↓
@@ -49,7 +42,7 @@ Supported datasets:
 ```
 
 
-## 4. Repository Structure
+## 3. Repository Structure
 ```
 Project7/
 ├── models
@@ -77,7 +70,7 @@ Project7/
 
 
 
-## 5. Data Transformations
+## 4. Data Transformations
 Key transformations implemented in this project:
 - Normalizing raw currency symbols into ISO currency codes
 - Cleaning null / blank values using standardized rules
@@ -87,7 +80,7 @@ Key transformations implemented in this project:
 
 
 
-## 6. Data Quality Tests
+## 5. Data Quality Tests
 The following dbt tests are implemented:
 
 - **Primary key checks**
@@ -95,12 +88,21 @@ The following dbt tests are implemented:
   - `unique`
 - **Foreign key relationship tests**
   - Applied selectively for stable dimensions (date, store, location)
-- **Exchange rate validation**
-  - Ensures each currency has a valid USD rate
+
+
+## 6. Looker studo dashboard
+After build analytics models, I will transform into data mart models to build Looker Dashboard served for monitoring:
+
+🔗 **Live dashboard:**  
+https://lookerstudio.google.com/u/0/reporting/44b51f96-7ee7-4eb1-8aa4-03148535665e/
+
+
+![alt text](<Screenshot from 2026-01-26 20-18-13.png>)
 
 
 
-## 7. Running the Project
+
+## 6. Running the Project
 
 ### Full refresh (seed + models + tests)
 ```bash

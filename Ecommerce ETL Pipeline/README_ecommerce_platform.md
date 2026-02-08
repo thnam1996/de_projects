@@ -73,6 +73,8 @@ Looker Studio Dashboard
 - Top products by revenue  
 - Revenue distribution by country  
 
+![alt text](<Screenshot from 2026-01-26 20-18-13.png>)
+
 🔗 **Live dashboard:**  
 https://lookerstudio.google.com/u/0/reporting/44b51f96-7ee7-4eb1-8aa4-03148535665e/
 
